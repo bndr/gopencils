@@ -1,8 +1,7 @@
 # Gopencils - Dynamically consume REST APIs
 
 ## Summary
-Easily consume any REST API's. Supported Response formats: JSON and XML(todo)
-
+Gopencils is a REST Client written in go. Easily consume any REST API's. Supported Response formats: JSON
 
 ## Install
 
