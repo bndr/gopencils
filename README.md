@@ -62,9 +62,11 @@ type respStruct struct {
 }
 
 api := gopencils.Api("https://api.github.com")
-// Users endpoint
+// Users Resource
 users := api.Res("users")
+
 usernames := []string{"bndr", "torvalds", "coleifer"}
+
 for _, username := range usernames {
 	// Create a new pointer to response Struct
 	r := new(respStruct)
@@ -84,7 +86,7 @@ I work a lot with REST APIs and I caught myself writing the same code over and o
 
 ## Is it ready?
 
-It is still in beta. But I would be glad if you could test it on your pet projects. The API will be improved, but no braking changes are planned. 
+It is still in beta. But I would be glad if you could test it on your pet projects. The API will be improved, but no breaking changes are planned. 
 
 ## Contribute
 
