@@ -53,6 +53,8 @@ Example Github Api
 
 ```go
 
+package main
+
 import (
 	"fmt"
 	"github.com/bndr/gopencils"
