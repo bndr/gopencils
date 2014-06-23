@@ -47,22 +47,21 @@ func Api(url string, options ...interface{}) *Resource {
 		}
 		if oauthClient, ok := options[0].(*http.Client); ok {
 			apiInstance.Client = oauthClient
-		} else {
-			apiInstance.Cookies, _ = cookiejar.New(nil)
-
-			// Skip verify by default?
-			tr := &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			}
-
-			client := &http.Client{
-				Transport: tr,
-				Jar:       apiInstance.Cookies,
-			}
-
-			apiInstance.Client = client
-
 		}
+	}
+	if apiInstance.Client == nil {
+		apiInstance.Cookies, _ = cookiejar.New(nil)
+
+		// Skip verify by default?
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+
+		client := &http.Client{
+			Transport: tr,
+			Jar:       apiInstance.Cookies,
+		}
+		apiInstance.Client = client
 	}
 	return &Resource{Url: "", Api: apiInstance}
 }

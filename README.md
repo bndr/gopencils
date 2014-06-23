@@ -45,6 +45,33 @@ resource := api.Res("users").Id(123).Res("items", resp).Get(querystring)
 // resource.Raw contains raw http response,
 
 ```
+
+Example Github Api
+
+```go
+
+type respStruct struct {
+	Login string
+	Id    int
+	Name  string
+}
+
+api := gopencils.Api("https://api.github.com")
+// Users endpoint
+users := api.Res("users")
+usernames := []string{"bndr", "torvalds", "coleifer"}
+for _, username := range usernames {
+	// Create a new pointer to response Struct
+	r := new(respStruct)
+	// Get user with id i into the newly created response struct
+	_, err := users.Id(username, r).Get()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(r)
+	}
+}
+```
 More examples in the examples folder.
 
 ## Why?
