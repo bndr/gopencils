@@ -10,17 +10,40 @@ Gopencils was designed to help you easily make requests to REST APIs without muc
 Example Basic-Auth
 
 ```go
+
+type UserExample struct {
+	Id            string
+	Name          string
+	Origin        string
+	Url           string
+	SomeJsonField string
+}
+
 // Create Basic Auth
 auth := gopencils.BasicAuth{"username", "password"}
 
 // Create New Api with our auth
 api := gopencils.Api("http://your-api-url.com/api/", &auth)
+
 // Create a pointer to our response struct
-resp := &respStruct{}
+resp := &UserExample{}
 
 // Perform a GET request
 // URL Requested: http://your-api-url.com/api/users/1
 api.Res("users", resp).Id(1).Get()
+
+// Get Single Item
+api.Res("users", resp).Id(1).Get()
+
+// Perform a GET request with Querystring
+querystring := map[string]string{"page": "100", "per_page": "1000"}
+
+// URL Requested: http://your-api-url.com/api/users/123/items?page=100&per_page=1000
+resource := api.Res("users").Id(123).Res("items", resp).Get(querystring)
+
+// Now resp contains the returned json object
+// resource.Raw contains raw http response,
+
 ```
 More examples in the examples folder.
 
