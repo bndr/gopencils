@@ -3,7 +3,7 @@ package main
 import (
 	"code.google.com/p/goauth2/oauth"
 	"fmt"
-	"gopencils"
+	"github.com/bndr/gopencils"
 )
 
 // Oauth example taken from https://godoc.org/code.google.com/p/goauth2/oauth

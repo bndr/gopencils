@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gopencils"
+	"github.com/bndr/gopencils"
 )
 
 type respStruct struct {
