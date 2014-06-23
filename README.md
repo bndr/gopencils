@@ -3,6 +3,11 @@
 ## Summary
 Easily consume any REST API's. Supported Response formats: JSON and XML(todo)
 
+
+## Install
+
+    go get github.com/bndr/gopencils
+
 ## Simple to use
 
 Gopencils was designed to help you easily make requests to REST APIs without much hassle. It supports both Basic-Auth as well as OAuth.
