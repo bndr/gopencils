@@ -104,6 +104,7 @@ All Contributions are welcome. The todo list is on the bottom of this README. Fe
 Apache License 2.0
 
 ## TODO
-0. Add more Options (Flexibility)
-1. Support XML Response
-2. Better Error Handling
+0. Tests (>70% Coverage)
+1. Add more Options (Flexibility)
+2. Support XML Response
+3. Better Error Handling
