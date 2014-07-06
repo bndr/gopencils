@@ -139,11 +139,13 @@ func (r *Resource) do(method string) (*Resource, error) {
 	}
 
 	if r.Api.BasicAuth != nil {
-		req.SetBasicAuth(r.Api.BasicAuth.Username, r.Api.BasicAuth.Username)
+		req.SetBasicAuth(r.Api.BasicAuth.Username, r.Api.BasicAuth.Password)
 	}
 
 	if r.Headers != nil {
-		req.Header = r.Headers
+		for k, _ := range r.Headers {
+			req.Header.Set(k, r.Headers.Get(k))
+		}
 	}
 
 	resp, err := r.Api.Client.Do(req)
