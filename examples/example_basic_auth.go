@@ -1,17 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/bndr/gopencils"
 )
-
-type respStruct struct {
-	Args          map[string]string
-	Headers       map[string]string
-	Origin        string
-	Url           string
-	Authorization string
-}
 
 func main() {
 	// Create Basic Auth
@@ -21,7 +12,7 @@ func main() {
 
 	// Maybe some payload to send along with the request?
 	payload := map[string]interface{}{"Key": "Value1"}
-
+	resp := new(respStruct)
 	// Perform a GET request
 	// URL Requested: http://your-api-url.com/api/users
 	api.Res("users", &respStruct{}).Get()

@@ -2,8 +2,8 @@ package main
 
 import (
 	"code.google.com/p/goauth2/oauth"
-	"fmt"
 	"github.com/bndr/gopencils"
+	"net/http"
 )
 
 // Oauth example taken from https://godoc.org/code.google.com/p/goauth2/oauth
@@ -19,8 +19,8 @@ type respStruct struct {
 
 // Specify your configuration. (typically as a global variable)
 var config = &oauth.Config{
-	ClientId:     YOUR_CLIENT_ID,
-	ClientSecret: YOUR_CLIENT_SECRET,
+	ClientId:     "YOUR_CLIENT_ID",
+	ClientSecret: "YOUR_CLIENT_SECRET",
 	Scope:        "https://www.googleapis.com/auth/buzz",
 	AuthURL:      "https://accounts.google.com/o/oauth2/auth",
 	TokenURL:     "https://accounts.google.com/o/oauth2/token",
@@ -46,20 +46,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	api := gopencils.Api("http://your-api-url.com/api/", c)
 
 	// Create a pointer to our response struct, which will hold the response
-	resp := &respStruct{}
+	re := &respStruct{}
 	// Maybe some payload to send along with the request?
 	payload := map[string]interface{}{"Key1": "Value1"}
 
 	// Perform a GET request
 	// URL Requested: http://your-api-url.com/api/users
-	api.Res("users", resp).Get()
+	api.Res("users", re).Get()
 
 	// Perform a GET request with Querystring
 	querystring := map[string]string{"page": "100"}
 	// URL Requested: http://your-api-url.com/api/users/123/items?page=100
-	api.Res("users").Id(123).Res("items", resp).Get(querystring)
+	api.Res("users").Id(123).Res("items", re).Get(querystring)
 
 	// Or perform a POST Request
 	// URL Requested: http://your-api-url.com/api/items/123 with payload as json Data
-	api.Res("items", resp).Id(123).Post(payload)
+	api.Res("items", re).Id(123).Post(payload)
 }
