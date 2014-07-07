@@ -1,4 +1,5 @@
 # Gopencils - Dynamically consume REST APIs
+[![Build Status](https://travis-ci.org/bndr/gopencils.svg?branch=master)](https://travis-ci.org/bndr/gopencils)
 
 ## Summary
 Gopencils is a REST Client written in go. Easily consume any REST API's. Supported Response formats: JSON
