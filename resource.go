@@ -54,7 +54,7 @@ func (r *Resource) Res(options ...interface{}) *Resource {
 
 		return r.Api.Methods[url]
 	}
-	return nil
+	return r
 }
 
 func (r *Resource) Id(options ...interface{}) *Resource {
@@ -71,6 +71,8 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 
 		if len(options) > 1 {
 			r.Api.Methods[url].Response = options[1]
+		} else {
+			r.Api.Methods[url].Response = &r.Api.Methods[r.Url].Response
 		}
 		return r.Api.Methods[url]
 	}
@@ -158,8 +160,7 @@ func (r *Resource) do(method string) (*Resource, error) {
 	defer resp.Body.Close()
 
 	contents, _ := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(contents, r.Response)
-
+	err = json.Unmarshal(contents, r.Api.Methods[r.Url].Response)
 	if err != nil {
 		return r, err
 	}
