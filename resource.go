@@ -12,6 +12,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// Gopencils is a Golang REST Client with which you can easily consume REST API's. Supported Response formats: JSON
 package gopencils
 
 import (
@@ -26,6 +27,7 @@ import (
 
 var queryString map[string]string
 
+// Resource is basically an url relative to given API Baseurl.
 type Resource struct {
 	Api         *ApiStruct
 	Url         string
@@ -37,6 +39,7 @@ type Resource struct {
 	Raw         *http.Response
 }
 
+// Creates a new Resource.
 func (r *Resource) Res(options ...interface{}) *Resource {
 	if len(options) > 0 {
 		var url string
@@ -57,6 +60,7 @@ func (r *Resource) Res(options ...interface{}) *Resource {
 	return r
 }
 
+// Same as Res() Method, but returns a Resource with url resource/:id
 func (r *Resource) Id(options ...interface{}) *Resource {
 	if len(options) > 0 {
 		id := ""
@@ -79,11 +83,14 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 	return r
 }
 
+// Sets Querystring for current Resource
 func (r *Resource) SetQuery(querystring map[string]string) *Resource {
 	r.Querystring = querystring
 	return r
 }
 
+// Performs a GET request on given Resource
+// Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Querystring = options[0].(map[string]string)
@@ -91,6 +98,8 @@ func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 	return r.do("GET")
 }
 
+// Performs a HEAD request on given Resource
+// Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Head(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Querystring = options[0].(map[string]string)
@@ -98,6 +107,8 @@ func (r *Resource) Head(options ...interface{}) (*Resource, error) {
 	return r.do("HEAD")
 }
 
+// Performs a PUT request on given Resource.
+// Accepts interface{} as parameter, will be used as payload.
 func (r *Resource) Put(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Payload = r.SetPayload(options[0])
@@ -105,6 +116,8 @@ func (r *Resource) Put(options ...interface{}) (*Resource, error) {
 	return r.do("PUT")
 }
 
+// Performs a POST request on given Resource.
+// Accepts interface{} as parameter, will be used as payload.
 func (r *Resource) Post(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Payload = r.SetPayload(options[0])
@@ -112,6 +125,8 @@ func (r *Resource) Post(options ...interface{}) (*Resource, error) {
 	return r.do("POST")
 }
 
+// Performs a Delete request on given Resource.
+// Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Querystring = options[0].(map[string]string)
@@ -119,6 +134,8 @@ func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 	return r.do("DELETE")
 }
 
+// Performs a Delete request on given Resource.
+// Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Options(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Querystring = options[0].(map[string]string)
@@ -126,6 +143,8 @@ func (r *Resource) Options(options ...interface{}) (*Resource, error) {
 	return r.do("OPTIONS")
 }
 
+// Performs a PATCH request on given Resource.
+// Accepts interface{} as parameter, will be used as payload.
 func (r *Resource) Patch(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		r.Payload = r.SetPayload(options[0])
@@ -133,6 +152,8 @@ func (r *Resource) Patch(options ...interface{}) (*Resource, error) {
 	return r.do("PATCH")
 }
 
+// Main method, opens the connection, sets basic auth, applies headers,
+// parses response json.
 func (r *Resource) do(method string) (*Resource, error) {
 	url := r.parseUrl()
 	req, err := http.NewRequest(method, url, r.Payload)
@@ -168,6 +189,7 @@ func (r *Resource) do(method string) (*Resource, error) {
 	return r, nil
 }
 
+// Sets Payload for current Resource
 func (r *Resource) SetPayload(args interface{}) io.Reader {
 	var b []byte
 	b, _ = json.Marshal(args)
@@ -175,14 +197,18 @@ func (r *Resource) SetPayload(args interface{}) io.Reader {
 	return bytes.NewBuffer(b)
 }
 
+// Sets Headers
 func (r *Resource) SetHeader(key string, value string) {
 	r.Headers.Add(key, value)
 }
 
+// Overwrites the client that will be used for requests.
+// For example if you want to use your own client with OAuth2
 func (r *Resource) SetClient(c *http.Client) {
 	r.Api.Client = c
 }
 
+// Parses url and all Query parameters
 func (r Resource) parseUrl() string {
 	url := r.Api.Base + r.Url
 	separator := "?"

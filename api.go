@@ -21,11 +21,14 @@ import (
 	"strings"
 )
 
+// Basic Auth
 type BasicAuth struct {
 	Username string
 	Password string
 }
 
+// Main Api Instance.
+// No Options yet supported.
 type ApiStruct struct {
 	Base      string
 	Methods   map[string]*Resource
@@ -35,6 +38,8 @@ type ApiStruct struct {
 	Cookies   *cookiejar.Jar
 }
 
+// Create a new API Instance and returns a Resource
+// Accepts URL as parameter, and either a Basic Auth or a OAuth2 Client.
 func Api(url string, options ...interface{}) *Resource {
 	if !strings.HasSuffix(url, "/") {
 		url = url + "/"

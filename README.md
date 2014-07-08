@@ -94,7 +94,7 @@ I work a lot with REST APIs and I caught myself writing the same code over and o
 
 ## Is it ready?
 
-It is still in beta. But I would be glad if you could test it on your pet projects. The API will be improved, but no breaking changes are planned. 
+It is still in beta. But I would be glad if you could test it on your pet projects. The API will be improved, but no breaking changes are planned.
 
 ## Contribute
 
@@ -105,7 +105,6 @@ All Contributions are welcome. The todo list is on the bottom of this README. Fe
 Apache License 2.0
 
 ## TODO
-0. Tests (>70% Coverage)
 1. Add more Options (Flexibility)
 2. Support XML Response
 3. Better Error Handling

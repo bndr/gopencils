@@ -76,6 +76,13 @@ func TestResource_update(t *testing.T) {
 	assert.Equal(t, r.Json["Key"], "Value1", "Payload must match")
 }
 
+func TestResource_delete(t *testing.T) {
+	api := Api("https://httpbin.org")
+	r := new(binStruct)
+	api.Id("delete", r).Delete()
+	assert.Equal(t, r.Url, "http://httpbin.org/delete", "Url must match")
+}
+
 func TestResource_id(t *testing.T) {
 	api := Api("https://test-url.com")
 	assert.Equal(t, api.Res("users").Id("test").Url, "users/test", "Url should match")
