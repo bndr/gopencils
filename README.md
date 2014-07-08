@@ -1,4 +1,5 @@
 # Gopencils - Dynamically consume REST APIs
+[![GoDoc](https://godoc.org/github.com/bndr/gopencils?status.svg)](https://godoc.org/github.com/bndr/gopencils)
 [![Build Status](https://travis-ci.org/bndr/gopencils.svg?branch=master)](https://travis-ci.org/bndr/gopencils)
 
 ## Summary
