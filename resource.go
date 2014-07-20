@@ -18,11 +18,14 @@ package gopencils
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 )
+
+var ErrCantUseAsQuery = errors.New("can't use options[0] as Query")
 
 // Resource is basically an url relative to given API Baseurl.
 type Resource struct {
@@ -93,10 +96,10 @@ func (r *Resource) SetQuery(querystring map[string]string) *Resource {
 func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		if qry, ok := options[0].(map[string]string); ok {
-			for k, v := range qry {
-				r.QueryValues.Set(k, v)
-			}
-		} // else { panic ? }
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 
 	}
 	return r.do("GET")
@@ -107,10 +110,10 @@ func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 func (r *Resource) Head(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		if qry, ok := options[0].(map[string]string); ok {
-			for k, v := range qry {
-				r.QueryValues.Set(k, v)
-			}
-		} // else { panic ? }
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 	}
 	return r.do("HEAD")
 }
@@ -138,10 +141,10 @@ func (r *Resource) Post(options ...interface{}) (*Resource, error) {
 func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		if qry, ok := options[0].(map[string]string); ok {
-			for k, v := range qry {
-				r.QueryValues.Set(k, v)
-			}
-		} // else { panic ? }
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 	}
 	return r.do("DELETE")
 }
@@ -151,10 +154,10 @@ func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 func (r *Resource) Options(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
 		if qry, ok := options[0].(map[string]string); ok {
-			for k, v := range qry {
-				r.QueryValues.Set(k, v)
-			}
-		} // else { panic ? }
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 	}
 	return r.do("OPTIONS")
 }
