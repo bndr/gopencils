@@ -18,7 +18,7 @@ import (
 	"crypto/tls"
 	"net/http"
 	"net/http/cookiejar"
-	"strings"
+	"net/url"
 )
 
 // Basic Auth
@@ -30,7 +30,7 @@ type BasicAuth struct {
 // Main Api Instance.
 // No Options yet supported.
 type ApiStruct struct {
-	Base      string
+	BaseUrl   *url.URL
 	Methods   map[string]*Resource
 	Options   map[string]bool
 	BasicAuth *BasicAuth
@@ -40,11 +40,14 @@ type ApiStruct struct {
 
 // Create a new API Instance and returns a Resource
 // Accepts URL as parameter, and either a Basic Auth or a OAuth2 Client.
-func Api(url string, options ...interface{}) *Resource {
-	if !strings.HasSuffix(url, "/") {
-		url = url + "/"
+func Api(baseUrl string, options ...interface{}) *Resource {
+	u, err := url.Parse(baseUrl)
+	if err != nil {
+		// TODO: don't panic..
+		panic("Api() - url.Parse(baseUrl) Error:" + err.Error())
 	}
-	apiInstance := &ApiStruct{Base: url, Methods: make(map[string]*Resource), BasicAuth: nil}
+
+	apiInstance := &ApiStruct{BaseUrl: u, Methods: make(map[string]*Resource), BasicAuth: nil}
 
 	if len(options) > 0 {
 		if auth, ok := options[0].(*BasicAuth); ok {
@@ -68,5 +71,5 @@ func Api(url string, options ...interface{}) *Resource {
 		}
 		apiInstance.Client = client
 	}
-	return &Resource{Url: "", Api: apiInstance}
+	return &Resource{Url: "", Api: apiInstance, QueryValues: make(url.Values)}
 }
