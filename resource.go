@@ -24,8 +24,6 @@ import (
 	"strconv"
 )
 
-var queryString map[string]string
-
 // Resource is basically an url relative to given API Baseurl.
 type Resource struct {
 	Api         *ApiStruct
