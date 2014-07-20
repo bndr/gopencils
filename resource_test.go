@@ -75,7 +75,14 @@ func TestResource_get(t *testing.T) {
 }
 
 func TestResource_create(t *testing.T) {
-	api := Api("http://httpbin.org")
+	testServer := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, req.Method, "POST", "unexpected Method")
+		assert.Equal(t, req.URL.Path, "/post", "unexpected Path")
+		assert.Equal(t, req.Header.Get("Content-Type"), "application/json", "Expected json content type")
+		fmt.Fprintln(rw, `{"args": {},"data": "{\"Key\":\"Value1\"}","files": {},"form": {},"headers": {"Accept": "*/*",  "Connection": "close",  "Content-Length": "16",  "Content-Type": "application/json",  "Host": "httpbin.org",  "User-Agent": "curl/7.37.0",  "X-Request-Id": "6268bee8-2ea0-4144-802a-6166fe18d84f"},"json": {"Key": "Value1"},"origin": "95.91.230.168","url": "https://httpbin.org/post"}`)
+	}))
+
+	api := Api(testServer.URL)
 	payload := map[string]interface{}{"Key": "Value1"}
 	r := new(binStruct)
 	api.Res("post", r).Post(payload)
@@ -83,7 +90,14 @@ func TestResource_create(t *testing.T) {
 }
 
 func TestResource_update(t *testing.T) {
-	api := Api("https://httpbin.org")
+	testServer := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, req.Method, "PUT", "unexpected Method")
+		assert.Equal(t, req.URL.Path, "/put", "unexpected Path")
+		assert.Equal(t, req.Header.Get("Content-Type"), "application/json", "Expected json content type")
+		fmt.Fprintln(rw, `{"args": {},"data": "{\"Key\":\"Value1\"}","files": {},"form": {},"headers": {"Accept": "*/*",  "Connection": "close",  "Content-Length": "16",  "Content-Type": "application/json",  "Host": "httpbin.org",  "User-Agent": "curl/7.37.0",  "X-Request-Id": "6268bee8-2ea0-4144-802a-6166fe18d84f"},"json": {"Key": "Value1"},"origin": "95.91.230.168","url": "https://httpbin.org/post"}`)
+	}))
+
+	api := Api(testServer.URL)
 	payload := map[string]interface{}{"Key": "Value1"}
 	r := new(binStruct)
 	api.Res("put", r).Put(payload)
@@ -91,7 +105,13 @@ func TestResource_update(t *testing.T) {
 }
 
 func TestResource_delete(t *testing.T) {
-	api := Api("https://httpbin.org")
+	testServer := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, req.Method, "DELETE", "unexpected Method")
+		assert.Equal(t, req.URL.Path, "/delete", "unexpected Path")
+		fmt.Fprintln(rw, `{"args": {},"data": "","files": {},"form": {},"headers": {"Accept": "*/*",  "Connection": "close",  "Host": "httpbin.org",  "User-Agent": "curl/7.37.0",  "X-Request-Id": "b29e2435-926f-4fb4-bd1d-ec1b179e1523"},"json": null,"origin": "95.91.230.168","url": "https://httpbin.org/delete"}`)
+	}))
+
+	api := Api(testServer.URL)
 	r := new(binStruct)
 	api.Id("delete", r).Delete()
 	assert.Equal(t, r.Url, "https://httpbin.org/delete", "Url must match")
