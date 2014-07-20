@@ -80,7 +80,7 @@ func TestResource_delete(t *testing.T) {
 	api := Api("https://httpbin.org")
 	r := new(binStruct)
 	api.Id("delete", r).Delete()
-	assert.Equal(t, r.Url, "http://httpbin.org/delete", "Url must match")
+	assert.Equal(t, r.Url, "https://httpbin.org/delete", "Url must match")
 }
 
 func TestResource_id(t *testing.T) {
