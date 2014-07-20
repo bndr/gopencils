@@ -48,13 +48,13 @@ func (r *Resource) Res(options ...interface{}) *Resource {
 			url = options[0].(string)
 		}
 
-		r.Api.Methods[url] = &Resource{Url: url, Api: r.Api, Headers: http.Header{}}
+		newR := &Resource{Url: url, Api: r.Api, Headers: http.Header{}}
 
 		if len(options) > 1 {
-			r.Api.Methods[url].Response = options[1]
+			newR.Response = options[1]
 		}
 
-		return r.Api.Methods[url]
+		return newR
 	}
 	return r
 }
@@ -70,14 +70,12 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 			id = strconv.Itoa(v)
 		}
 		url := r.Url + "/" + id
-		r.Api.Methods[url] = &Resource{id: id, Url: url, Api: r.Api, Headers: http.Header{}}
+		newR := &Resource{id: id, Url: url, Api: r.Api, Headers: http.Header{}, Response: &r.Response}
 
 		if len(options) > 1 {
-			r.Api.Methods[url].Response = options[1]
-		} else {
-			r.Api.Methods[url].Response = &r.Api.Methods[r.Url].Response
+			newR.Response = options[1]
 		}
-		return r.Api.Methods[url]
+		return newR
 	}
 	return r
 }
@@ -179,7 +177,7 @@ func (r *Resource) do(method string) (*Resource, error) {
 
 	defer resp.Body.Close()
 
-	err = json.NewDecoder(resp.Body).Decode(r.Api.Methods[r.Url].Response)
+	err = json.NewDecoder(resp.Body).Decode(r.Response)
 	if err != nil {
 		return r, err
 	}
