@@ -20,7 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 )
@@ -180,8 +179,7 @@ func (r *Resource) do(method string) (*Resource, error) {
 
 	defer resp.Body.Close()
 
-	contents, _ := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(contents, r.Api.Methods[r.Url].Response)
+	err = json.NewDecoder(resp.Body).Decode(r.Api.Methods[r.Url].Response)
 	if err != nil {
 		return r, err
 	}
