@@ -1,0 +1,5 @@
+# Contributors: git log --format='%aN <%aE>' | sort -uf
+bndr <bndrzz@gmail.com>
+Henry <cryptix@riseup.net>
+Stanislav Seletskiy <s.seletskiy@gmail.com>
+Vadim Kravcenko <bndrzz@gmail.com>
