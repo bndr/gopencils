@@ -31,8 +31,6 @@ type BasicAuth struct {
 // No Options yet supported.
 type ApiStruct struct {
 	Base      string
-	Methods   map[string]*Resource
-	Options   map[string]bool
 	BasicAuth *BasicAuth
 	Client    *http.Client
 	Cookies   *cookiejar.Jar
@@ -44,7 +42,8 @@ func Api(url string, options ...interface{}) *Resource {
 	if !strings.HasSuffix(url, "/") {
 		url = url + "/"
 	}
-	apiInstance := &ApiStruct{Base: url, Methods: make(map[string]*Resource), BasicAuth: nil}
+
+	apiInstance := &ApiStruct{Base: url, BasicAuth: nil}
 
 	if len(options) > 0 {
 		if auth, ok := options[0].(*BasicAuth); ok {
