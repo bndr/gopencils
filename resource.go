@@ -42,20 +42,20 @@ type Resource struct {
 // Creates a new Resource.
 func (r *Resource) Res(options ...interface{}) *Resource {
 	if len(options) > 0 {
-		var u string
+		var url string
 		if len(r.Url) > 0 {
-			u = r.Url + "/" + options[0].(string)
+			url = r.Url + "/" + options[0].(string)
 		} else {
-			u = options[0].(string)
+			url = options[0].(string)
 		}
 
-		r.Api.Methods[u] = &Resource{Url: u, Api: r.Api, Headers: http.Header{}, QueryValues: make(url.Values)}
+		newR := &Resource{Url: url, Api: r.Api, Headers: http.Header{}}
 
 		if len(options) > 1 {
-			r.Api.Methods[u].Response = options[1]
+			newR.Response = options[1]
 		}
 
-		return r.Api.Methods[u]
+		return newR
 	}
 	return r
 }
@@ -71,14 +71,12 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 			id = strconv.Itoa(v)
 		}
 		url := r.Url + "/" + id
-		r.Api.Methods[url] = &Resource{id: id, Url: url, Api: r.Api, Headers: http.Header{}}
+		newR := &Resource{id: id, Url: url, Api: r.Api, Headers: http.Header{}, Response: &r.Response}
 
 		if len(options) > 1 {
-			r.Api.Methods[url].Response = options[1]
-		} else {
-			r.Api.Methods[url].Response = &r.Api.Methods[r.Url].Response
+			newR.Response = options[1]
 		}
-		return r.Api.Methods[url]
+		return newR
 	}
 	return r
 }
@@ -201,7 +199,7 @@ func (r *Resource) do(method string) (*Resource, error) {
 
 	defer resp.Body.Close()
 
-	err = json.NewDecoder(resp.Body).Decode(r.Api.Methods[r.Url].Response)
+	err = json.NewDecoder(resp.Body).Decode(r.Response)
 	if err != nil {
 		return r, err
 	}

@@ -31,8 +31,6 @@ type BasicAuth struct {
 // No Options yet supported.
 type ApiStruct struct {
 	BaseUrl   *url.URL
-	Methods   map[string]*Resource
-	Options   map[string]bool
 	BasicAuth *BasicAuth
 	Client    *http.Client
 	Cookies   *cookiejar.Jar
@@ -47,7 +45,7 @@ func Api(baseUrl string, options ...interface{}) *Resource {
 		panic("Api() - url.Parse(baseUrl) Error:" + err.Error())
 	}
 
-	apiInstance := &ApiStruct{BaseUrl: u, Methods: make(map[string]*Resource), BasicAuth: nil}
+	apiInstance := &ApiStruct{BaseUrl: u, BasicAuth: nil}
 
 	if len(options) > 0 {
 		if auth, ok := options[0].(*BasicAuth); ok {
