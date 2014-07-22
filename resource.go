@@ -18,20 +18,21 @@ package gopencils
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 )
 
-var queryString map[string]string
+var ErrCantUseAsQuery = errors.New("can't use options[0] as Query")
 
 // Resource is basically an url relative to given API Baseurl.
 type Resource struct {
 	Api         *ApiStruct
 	Url         string
 	id          string
-	Querystring map[string]string
+	QueryValues url.Values
 	Payload     io.Reader
 	Headers     http.Header
 	Response    interface{}
@@ -41,20 +42,20 @@ type Resource struct {
 // Creates a new Resource.
 func (r *Resource) Res(options ...interface{}) *Resource {
 	if len(options) > 0 {
-		var url string
+		var u string
 		if len(r.Url) > 0 {
-			url = r.Url + "/" + options[0].(string)
+			u = r.Url + "/" + options[0].(string)
 		} else {
-			url = options[0].(string)
+			u = options[0].(string)
 		}
 
-		r.Api.Methods[url] = &Resource{Url: url, Api: r.Api, Headers: http.Header{}}
+		r.Api.Methods[u] = &Resource{Url: u, Api: r.Api, Headers: http.Header{}, QueryValues: make(url.Values)}
 
 		if len(options) > 1 {
-			r.Api.Methods[url].Response = options[1]
+			r.Api.Methods[u].Response = options[1]
 		}
 
-		return r.Api.Methods[url]
+		return r.Api.Methods[u]
 	}
 	return r
 }
@@ -82,9 +83,11 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 	return r
 }
 
-// Sets Querystring for current Resource
+// Sets QueryValues for current Resource
 func (r *Resource) SetQuery(querystring map[string]string) *Resource {
-	r.Querystring = querystring
+	for k, v := range querystring {
+		r.QueryValues.Set(k, v)
+	}
 	return r
 }
 
@@ -92,7 +95,12 @@ func (r *Resource) SetQuery(querystring map[string]string) *Resource {
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
-		r.Querystring = options[0].(map[string]string)
+		if qry, ok := options[0].(map[string]string); ok {
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
+
 	}
 	return r.do("GET")
 }
@@ -101,7 +109,11 @@ func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Head(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
-		r.Querystring = options[0].(map[string]string)
+		if qry, ok := options[0].(map[string]string); ok {
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 	}
 	return r.do("HEAD")
 }
@@ -128,7 +140,11 @@ func (r *Resource) Post(options ...interface{}) (*Resource, error) {
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
-		r.Querystring = options[0].(map[string]string)
+		if qry, ok := options[0].(map[string]string); ok {
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 	}
 	return r.do("DELETE")
 }
@@ -137,7 +153,11 @@ func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Options(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
-		r.Querystring = options[0].(map[string]string)
+		if qry, ok := options[0].(map[string]string); ok {
+			r.SetQuery(qry)
+		} else {
+			return nil, ErrCantUseAsQuery
+		}
 	}
 	return r.do("OPTIONS")
 }
@@ -154,7 +174,9 @@ func (r *Resource) Patch(options ...interface{}) (*Resource, error) {
 // Main method, opens the connection, sets basic auth, applies headers,
 // parses response json.
 func (r *Resource) do(method string) (*Resource, error) {
-	url := r.parseUrl()
+	r.Api.BaseUrl.Path = r.Url
+	r.Api.BaseUrl.RawQuery = r.QueryValues.Encode()
+	url := r.Api.BaseUrl.String()
 	req, err := http.NewRequest(method, url, r.Payload)
 	if err != nil {
 		return r, err
@@ -204,15 +226,4 @@ func (r *Resource) SetHeader(key string, value string) {
 // For example if you want to use your own client with OAuth2
 func (r *Resource) SetClient(c *http.Client) {
 	r.Api.Client = c
-}
-
-// Parses url and all Query parameters
-func (r Resource) parseUrl() string {
-	url := r.Api.Base + r.Url
-	separator := "?"
-	for k, v := range r.Querystring {
-		url += fmt.Sprintf("%s%s=%s", separator, k, v)
-		separator = "&"
-	}
-	return url
 }

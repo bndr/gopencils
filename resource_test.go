@@ -1,8 +1,9 @@
 package gopencils
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type respStruct struct {
@@ -20,11 +21,10 @@ type binStruct struct {
 
 func TestResource_url(t *testing.T) {
 	api := Api("https://test-url.com")
-	assert.Equal(t, api.parseUrl(), "https://test-url.com/", "Parsed Url Should match")
-	api.SetQuery(map[string]string{"key": "value"})
-	assert.Equal(t, api.parseUrl(), "https://test-url.com/?key=value", "Parsed QueryString Url Should match")
+	assert.Equal(t, api.Api.BaseUrl.String(), "https://test-url.com", "Parsed Url Should match")
+	api.SetQuery(map[string]string{"key1": "value1", "key2": "value2"})
+	assert.Equal(t, api.QueryValues.Encode(), "key1=value1&key2=value2", "Parsed QueryString Url Should match")
 	assert.Equal(t, api.Url, "", "Base Url Should be empty")
-	assert.Equal(t, api.Api.Base, "https://test-url.com/", "Base Url Should be empty")
 }
 
 func TestResource_auth(t *testing.T) {
@@ -86,6 +86,5 @@ func TestResource_delete(t *testing.T) {
 func TestResource_id(t *testing.T) {
 	api := Api("https://test-url.com")
 	assert.Equal(t, api.Res("users").Id("test").Url, "users/test", "Url should match")
-	assert.Equal(t, api.Res("users").Id("test").parseUrl(), "https://test-url.com/users/test", "Url should match")
 	assert.Equal(t, api.Res("users").Id(123).Res("items").Id(111).Url, "users/123/items/111", "Multilevel Url should match")
 }
