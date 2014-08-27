@@ -39,6 +39,22 @@ func TestResource_url(t *testing.T) {
 	assert.Equal(t, api.Url, "", "Base Url Should be empty")
 }
 
+func TestResource_urlWithPath(t *testing.T) {
+	testMux.HandleFunc("/path/to/api/resname/id123", func(rw http.ResponseWriter, req *http.Request) {
+		fmt.Fprintln(rw, `{"Test":"Okay"}`)
+	})
+
+	res := Api(testSrv.URL+"/path/to/api", nil)
+
+	var resp struct {
+		Test string
+	}
+
+	_, err := res.Res("resname").Id("id123", &resp).Get()
+	assert.Nil(t, err, "err should be nil")
+	assert.Equal(t, "Okay", resp.Test, "resp shoul be Okay")
+}
+
 func TestResource_auth(t *testing.T) {
 	api := Api("https://test-url.com", &BasicAuth{"username", "password"})
 	assert.Equal(t, api.Api.BasicAuth.Username, "username", "Username should match")
