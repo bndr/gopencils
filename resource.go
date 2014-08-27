@@ -172,10 +172,14 @@ func (r *Resource) Patch(options ...interface{}) (*Resource, error) {
 // Main method, opens the connection, sets basic auth, applies headers,
 // parses response json.
 func (r *Resource) do(method string) (*Resource, error) {
-	r.Api.BaseUrl.Path = r.Url
-	r.Api.BaseUrl.RawQuery = r.QueryValues.Encode()
-	url := r.Api.BaseUrl.String()
-	req, err := http.NewRequest(method, url, r.Payload)
+	url := *r.Api.BaseUrl
+	if len(url.Path) > 0 {
+		url.Path += "/" + r.Url
+	} else {
+		url.Path = r.Url
+	}
+	url.RawQuery = r.QueryValues.Encode()
+	req, err := http.NewRequest(method, url.String(), r.Payload)
 	if err != nil {
 		return r, err
 	}
