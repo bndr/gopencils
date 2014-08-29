@@ -83,6 +83,7 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 
 // Sets QueryValues for current Resource
 func (r *Resource) SetQuery(querystring map[string]string) *Resource {
+	r.QueryValues = make(url.Values)
 	for k, v := range querystring {
 		r.QueryValues.Set(k, v)
 	}

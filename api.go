@@ -69,5 +69,5 @@ func Api(baseUrl string, options ...interface{}) *Resource {
 		}
 		apiInstance.Client = client
 	}
-	return &Resource{Url: "", Api: apiInstance, QueryValues: make(url.Values)}
+	return &Resource{Url: "", Api: apiInstance}
 }
