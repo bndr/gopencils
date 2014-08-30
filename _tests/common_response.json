@@ -1,0 +1,20 @@
+{
+  "args": {},
+  "data": "{\"Key\":\"Value1\"}",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Connection": "close",
+    "Content-Length": "16",
+    "Content-Type": "application/json",
+    "Host": "httpbin.org",
+    "User-Agent": "curl/7.37.0",
+    "X-Request-Id": "6268bee8-2ea0-4144-802a-6166fe18d84f"
+  },
+  "json": {
+    "Key": "Value1"
+  },
+  "origin": "95.91.230.168",
+  "url": "https://httpbin.org/post"
+}

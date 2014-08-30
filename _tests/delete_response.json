@@ -1,0 +1,16 @@
+{
+  "args": {},
+  "data": "",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Connection": "close",
+    "Host": "httpbin.org",
+    "User-Agent": "curl/7.37.0",
+    "X-Request-Id": "b29e2435-926f-4fb4-bd1d-ec1b179e1523"
+  },
+  "json": null,
+  "origin": "95.91.230.168",
+  "url": "https://httpbin.org/delete"
+}
