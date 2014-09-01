@@ -154,7 +154,7 @@ func TestCanDeleteResource(t *testing.T) {
 	assert.Equal(t, r.Url, "https://httpbin.org/delete", "Url must match")
 }
 
-func TestResource_id(t *testing.T) {
+func TestResourceId(t *testing.T) {
 	api := Api("https://test-url.com")
 	assert.Equal(t, api.Res("users").Id("test").Url, "users/test",
 		"Url should match")
