@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -166,22 +167,35 @@ func TestDoNotDecodeBodyOnErr(t *testing.T) {
 		400, 401, 500, 501,
 	}
 
+	actualData := strings.TrimSpace(readJson("_tests/error.json"))
+
 	// will be changed later
 	code := 0
 	testMux.HandleFunc("/error",
 		func(rw http.ResponseWriter, req *http.Request) {
 			rw.WriteHeader(code)
-			fmt.Fprintln(rw, readJson("_tests/error.json"))
+			fmt.Fprintln(rw, actualData)
 		})
 
 	api := Api(testSrv.URL)
 
 	for _, code = range tests {
 		resp := make(map[string]interface{})
-		api.Id("error", &resp).Get()
+		r, err := api.Id("error", &resp).Get()
+		if err != nil {
+			t.Fatal(err)
+		}
 
-		assert.Equal(t, resp, map[string]interface{}{},
+		assert.Equal(t, map[string]interface{}{}, resp,
 			fmt.Sprintf("response should be unparsed: %d", code))
+
+		respData, err := ioutil.ReadAll(r.Raw.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, actualData, strings.TrimSpace(string(respData)),
+			fmt.Sprintf("response body is not accessible: %d", code))
 	}
 }
 
