@@ -202,6 +202,10 @@ func (r *Resource) do(method string) (*Resource, error) {
 
 	r.Raw = resp
 
+	if resp.StatusCode >= 400 {
+		return r, nil
+	}
+
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(r.Response)
