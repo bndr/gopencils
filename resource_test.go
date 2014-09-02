@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,14 +27,14 @@ type respStruct struct {
 	Name    string
 	Message string
 }
-type binStruct struct {
+type httpbinResponse struct {
 	Args    string
 	Headers map[string]string
 	Url     string
 	Json    map[string]interface{}
 }
 
-func TestResource_url(t *testing.T) {
+func TestResouceUrl(t *testing.T) {
 	api := Api("https://test-url.com")
 	assert.Equal(t, api.Api.BaseUrl.String(), "https://test-url.com",
 		"Parsed Url Should match")
@@ -43,7 +44,7 @@ func TestResource_url(t *testing.T) {
 	assert.Equal(t, api.Url, "", "Base Url Should be empty")
 }
 
-func TestResource_urlWithPath(t *testing.T) {
+func TestCanUsePathInResourceUrl(t *testing.T) {
 	testMux.HandleFunc("/path/to/api/resname/id123",
 		func(rw http.ResponseWriter, req *http.Request) {
 			fmt.Fprintln(rw, `{"Test":"Okay"}`)
@@ -60,7 +61,7 @@ func TestResource_urlWithPath(t *testing.T) {
 	assert.Equal(t, "Okay", resp.Test, "resp shoul be Okay")
 }
 
-func TestResource_auth(t *testing.T) {
+func TestCanUseAuthForApi(t *testing.T) {
 	api := Api("https://test-url.com", &BasicAuth{"username", "password"})
 	assert.Equal(t, api.Api.BasicAuth.Username, "username",
 		"Username should match")
@@ -68,7 +69,7 @@ func TestResource_auth(t *testing.T) {
 		"Password should match")
 }
 
-func TestResource_get(t *testing.T) {
+func TestCanGetResource(t *testing.T) {
 	// github stubs
 	testMux.HandleFunc("/users/bndr",
 		func(rw http.ResponseWriter, req *http.Request) {
@@ -105,7 +106,7 @@ func TestResource_get(t *testing.T) {
 	assert.Equal(t, resp2.Login, "bndr")
 }
 
-func TestResource_create(t *testing.T) {
+func TestCanCreateResource(t *testing.T) {
 	testMux.HandleFunc("/post",
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, req.Method, "POST", "unexpected Method")
@@ -117,12 +118,12 @@ func TestResource_create(t *testing.T) {
 
 	api := Api(testSrv.URL)
 	payload := map[string]interface{}{"Key": "Value1"}
-	r := new(binStruct)
+	r := new(httpbinResponse)
 	api.Res("post", r).Post(payload)
 	assert.Equal(t, r.Json["Key"], "Value1", "Payload must match")
 }
 
-func TestResource_update(t *testing.T) {
+func TestCanPutResource(t *testing.T) {
 	testMux.HandleFunc("/put",
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, req.Method, "PUT", "unexpected Method")
@@ -134,12 +135,12 @@ func TestResource_update(t *testing.T) {
 
 	api := Api(testSrv.URL)
 	payload := map[string]interface{}{"Key": "Value1"}
-	r := new(binStruct)
+	r := new(httpbinResponse)
 	api.Res("put", r).Put(payload)
 	assert.Equal(t, r.Json["Key"], "Value1", "Payload must match")
 }
 
-func TestResource_delete(t *testing.T) {
+func TestCanDeleteResource(t *testing.T) {
 	testMux.HandleFunc("/delete",
 		func(rw http.ResponseWriter, req *http.Request) {
 			assert.Equal(t, req.Method, "DELETE", "unexpected Method")
@@ -148,17 +149,54 @@ func TestResource_delete(t *testing.T) {
 		})
 
 	api := Api(testSrv.URL)
-	r := new(binStruct)
+	r := new(httpbinResponse)
 	api.Id("delete", r).Delete()
 	assert.Equal(t, r.Url, "https://httpbin.org/delete", "Url must match")
 }
 
-func TestResource_id(t *testing.T) {
+func TestResourceId(t *testing.T) {
 	api := Api("https://test-url.com")
 	assert.Equal(t, api.Res("users").Id("test").Url, "users/test",
 		"Url should match")
 	assert.Equal(t, api.Res("users").Id(123).Res("items").Id(111).Url,
 		"users/123/items/111", "Multilevel Url should match")
+}
+
+func TestDoNotDecodeBodyOnErr(t *testing.T) {
+	tests := []int{
+		400, 401, 500, 501,
+	}
+
+	actualData := strings.TrimSpace(readJson("_tests/error.json"))
+
+	// will be changed later
+	code := 0
+	testMux.HandleFunc("/error",
+		func(rw http.ResponseWriter, req *http.Request) {
+			rw.WriteHeader(code)
+			fmt.Fprintln(rw, actualData)
+		})
+
+	api := Api(testSrv.URL)
+
+	for _, code = range tests {
+		resp := make(map[string]interface{})
+		r, err := api.Id("error", &resp).Get()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, map[string]interface{}{}, resp,
+			fmt.Sprintf("response should be unparsed: %d", code))
+
+		respData, err := ioutil.ReadAll(r.Raw.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, actualData, strings.TrimSpace(string(respData)),
+			fmt.Sprintf("response body is not accessible: %d", code))
+	}
 }
 
 func readJson(path string) string {
