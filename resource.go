@@ -69,6 +69,8 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 			id = v.(string)
 		case int:
 			id = strconv.Itoa(v)
+		case int64:
+			id = strconv.FormatInt(v, 10)
 		}
 		url := r.Url + "/" + id
 		newR := &Resource{id: id, Url: url, Api: r.Api, Headers: http.Header{}, Response: &r.Response}
