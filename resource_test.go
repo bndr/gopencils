@@ -160,6 +160,8 @@ func TestResourceId(t *testing.T) {
 		"Url should match")
 	assert.Equal(t, api.Res("users").Id(123).Res("items").Id(111).Url,
 		"users/123/items/111", "Multilevel Url should match")
+	assert.Equal(t, api.Res("users").Id(int64(9223372036854775807)).Url, "users/9223372036854775807",
+		"int64 id should work")
 }
 
 func TestDoNotDecodeBodyOnErr(t *testing.T) {
