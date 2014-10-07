@@ -48,11 +48,11 @@ func Api(baseUrl string, options ...interface{}) *Resource {
 	apiInstance := &ApiStruct{BaseUrl: u, BasicAuth: nil}
 
 	for _, o := range options {
-		if auth, ok := o.(*BasicAuth); ok {
-			apiInstance.BasicAuth = auth
-		}
-		if oauthClient, ok := o.(*http.Client); ok {
-			apiInstance.Client = oauthClient
+		switch v := o.(type) {
+		case *BasicAuth:
+			apiInstance.BasicAuth = v
+		case *http.Client:
+			apiInstance.Client = v
 		}
 	}
 
