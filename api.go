@@ -47,14 +47,15 @@ func Api(baseUrl string, options ...interface{}) *Resource {
 
 	apiInstance := &ApiStruct{BaseUrl: u, BasicAuth: nil}
 
-	if len(options) > 0 {
-		if auth, ok := options[0].(*BasicAuth); ok {
+	for _, o := range options {
+		if auth, ok := o.(*BasicAuth); ok {
 			apiInstance.BasicAuth = auth
 		}
-		if oauthClient, ok := options[0].(*http.Client); ok {
+		if oauthClient, ok := o.(*http.Client); ok {
 			apiInstance.Client = oauthClient
 		}
 	}
+
 	if apiInstance.Client == nil {
 		apiInstance.Cookies, _ = cookiejar.New(nil)
 
