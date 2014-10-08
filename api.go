@@ -30,10 +30,11 @@ type BasicAuth struct {
 // Main Api Instance.
 // No Options yet supported.
 type ApiStruct struct {
-	BaseUrl   *url.URL
-	BasicAuth *BasicAuth
-	Client    *http.Client
-	Cookies   *cookiejar.Jar
+	BaseUrl    *url.URL
+	BasicAuth  *BasicAuth
+	Client     *http.Client
+	Cookies    *cookiejar.Jar
+	PathSuffix string
 }
 
 // Create a new API Instance and returns a Resource
@@ -47,14 +48,17 @@ func Api(baseUrl string, options ...interface{}) *Resource {
 
 	apiInstance := &ApiStruct{BaseUrl: u, BasicAuth: nil}
 
-	if len(options) > 0 {
-		if auth, ok := options[0].(*BasicAuth); ok {
-			apiInstance.BasicAuth = auth
-		}
-		if oauthClient, ok := options[0].(*http.Client); ok {
-			apiInstance.Client = oauthClient
+	for _, o := range options {
+		switch v := o.(type) {
+		case *BasicAuth:
+			apiInstance.BasicAuth = v
+		case *http.Client:
+			apiInstance.Client = v
+		case string:
+			apiInstance.PathSuffix = v
 		}
 	}
+
 	if apiInstance.Client == nil {
 		apiInstance.Cookies, _ = cookiejar.New(nil)
 
