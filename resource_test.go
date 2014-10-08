@@ -168,6 +168,21 @@ func TestPathSuffix(t *testing.T) {
 	assert.Equal(t, r.Json["Key"], "Value1", "Payload must match")
 }
 
+func TestPathSuffixWithQueryParam(t *testing.T) {
+	testMux.HandleFunc("/item/42.json",
+		func(rw http.ResponseWriter, req *http.Request) {
+			assert.Equal(t, req.Method, "GET", "unexpected Method")
+			assert.Equal(t, req.URL.Path, "/item/42.json", "unexpected Path")
+			assert.Equal(t, req.URL.Query().Get("param"), "test", "unexpected QueryParam")
+			fmt.Fprintln(rw, readJson("_tests/common_response.json"))
+		})
+
+	api := Api(testSrv.URL, ".json")
+	r := new(httpbinResponse)
+	api.Res("item", r).Id(42).Get(map[string]string{"param": "test"})
+	assert.Equal(t, r.Json["Key"], "Value1", "Payload must match")
+}
+
 func TestResourceId(t *testing.T) {
 	api := Api("https://test-url.com")
 	assert.Equal(t, api.Res("users").Id("test").Url, "users/test",
