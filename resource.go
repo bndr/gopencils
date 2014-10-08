@@ -181,6 +181,10 @@ func (r *Resource) do(method string) (*Resource, error) {
 	} else {
 		url.Path = r.Url
 	}
+	if r.Api.PathSuffix != "" {
+		url.Path += r.Api.PathSuffix
+	}
+
 	url.RawQuery = r.QueryValues.Encode()
 	req, err := http.NewRequest(method, url.String(), r.Payload)
 	if err != nil {
