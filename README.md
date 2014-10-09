@@ -49,6 +49,10 @@ resource := api.Res("users").Id(123).Res("items", resp).Get(querystring)
 // Now resp contains the returned json object
 // resource.Raw contains raw http response,
 
+// You can supply Path suffix to the api which will be applied to every url
+// e.g /items/id.json
+api := gopencils.Api("http://your-api-url.com/api/", &auth, ".json")
+
 ```
 
 Example Github Api
