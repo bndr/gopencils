@@ -49,7 +49,11 @@ func (r *Resource) Res(options ...interface{}) *Resource {
 			url = options[0].(string)
 		}
 
-		newR := &Resource{Url: url, Api: r.Api, Headers: http.Header{}}
+		header := r.Headers
+		if header == nil {
+			header = http.Header{}
+		}
+		newR := &Resource{Url: url, Api: r.Api, Headers: header}
 
 		if len(options) > 1 {
 			newR.Response = options[1]
@@ -73,7 +77,11 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 			id = strconv.FormatInt(v, 10)
 		}
 		url := r.Url + "/" + id
-		newR := &Resource{id: id, Url: url, Api: r.Api, Headers: http.Header{}, Response: &r.Response}
+		header := r.Headers
+		if header == nil {
+			header = http.Header{}
+		}
+		newR := &Resource{id: id, Url: url, Api: r.Api, Headers: header, Response: &r.Response}
 
 		if len(options) > 1 {
 			newR.Response = options[1]
