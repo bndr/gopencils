@@ -220,6 +220,10 @@ func (r *Resource) do(method string) (*Resource, error) {
 		return r, nil
 	}
 
+	for k, _ := range r.Raw.Header {
+		r.SetHeader(k, r.Raw.Header.Get(k));
+	}
+
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(r.Response)
