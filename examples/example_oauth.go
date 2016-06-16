@@ -1,7 +1,7 @@
 package main
 
 import (
-	"code.google.com/p/goauth2/oauth"
+	//"code.google.com/p/goauth2/oauth"
 	"github.com/bndr/gopencils"
 	"net/http"
 )
