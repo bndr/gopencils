@@ -230,6 +230,17 @@ func TestDoNotDecodeBodyOnErr(t *testing.T) {
 	}
 }
 
+func TestNewResourceUrl(t *testing.T) {
+
+		api := Api("https://test-url.com")
+
+		res := api.Res("old")
+
+		newRes := res.Res("new")
+
+		assert.Equal(t, "new", newRes.Url, "new Resource should not be appended to old Url")
+}
+
 func readJson(path string) string {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
