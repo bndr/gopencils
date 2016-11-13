@@ -1,7 +1,7 @@
 package main
 
 import (
-	"code.google.com/p/goauth2/oauth"
+	"golang.org/x/oauth2"
 	"github.com/bndr/gopencils"
 	"net/http"
 )
