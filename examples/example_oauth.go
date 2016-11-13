@@ -18,7 +18,7 @@ type respStruct struct {
 }
 
 // Specify your configuration. (typically as a global variable)
-var config = &oauth.Config{
+var config = &oauth2.Config{
 	ClientId:     "YOUR_CLIENT_ID",
 	ClientSecret: "YOUR_CLIENT_SECRET",
 	Scope:        "https://www.googleapis.com/auth/buzz",
@@ -35,7 +35,7 @@ func landing(w http.ResponseWriter, r *http.Request) {
 // The user will be redirected back to this handler, that takes the
 // "code" query parameter and Exchanges it for an access token.
 func handler(w http.ResponseWriter, r *http.Request) {
-	t := &oauth.Transport{Config: config}
+	t := &oauth2.Transport{Config: config}
 	t.Exchange(r.FormValue("code"))
 	// The Transport now has a valid Token. Create an *http.Client
 	// with which we can make authenticated API requests.
