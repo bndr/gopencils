@@ -214,6 +214,8 @@ func (r *Resource) do(method string) (*Resource, error) {
 		return r, err
 	}
 
+	resp.Close = true
+
 	r.Raw = resp
 
 	if resp.StatusCode >= 400 {
