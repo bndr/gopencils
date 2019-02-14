@@ -39,7 +39,7 @@ type Resource struct {
 	Raw         *http.Response
 }
 
-// Creates a new Resource.
+// Res: Creates a new Resource.
 func (r *Resource) Res(options ...interface{}) *Resource {
 	if len(options) > 0 {
 		var url string
@@ -64,7 +64,7 @@ func (r *Resource) Res(options ...interface{}) *Resource {
 	return r
 }
 
-// Same as Res() Method, but returns a Resource with url resource/:id
+// Id: Same as Res() Method, but returns a Resource with url resource/:id
 func (r *Resource) Id(options ...interface{}) *Resource {
 	if len(options) > 0 {
 		id := ""
@@ -91,7 +91,7 @@ func (r *Resource) Id(options ...interface{}) *Resource {
 	return r
 }
 
-// Sets QueryValues for current Resource
+// SetQuery: Sets QueryValues for current Resource
 func (r *Resource) SetQuery(querystring map[string]string) *Resource {
 	r.QueryValues = make(url.Values)
 	for k, v := range querystring {
@@ -100,7 +100,7 @@ func (r *Resource) SetQuery(querystring map[string]string) *Resource {
 	return r
 }
 
-// Performs a GET request on given Resource
+// Get: Performs a GET request on given Resource
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -114,7 +114,7 @@ func (r *Resource) Get(options ...interface{}) (*Resource, error) {
 	return r.do("GET")
 }
 
-// Performs a HEAD request on given Resource
+// Head: Performs a HEAD request on given Resource
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Head(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -127,7 +127,7 @@ func (r *Resource) Head(options ...interface{}) (*Resource, error) {
 	return r.do("HEAD")
 }
 
-// Performs a PUT request on given Resource.
+// Put: Performs a PUT request on given Resource.
 // Accepts interface{} as parameter, will be used as payload.
 func (r *Resource) Put(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -136,7 +136,7 @@ func (r *Resource) Put(options ...interface{}) (*Resource, error) {
 	return r.do("PUT")
 }
 
-// Performs a POST request on given Resource.
+// Post: Performs a POST request on given Resource.
 // Accepts interface{} as parameter, will be used as payload.
 func (r *Resource) Post(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -145,7 +145,7 @@ func (r *Resource) Post(options ...interface{}) (*Resource, error) {
 	return r.do("POST")
 }
 
-// Performs a Delete request on given Resource.
+// Delete: Performs a Delete request on given Resource.
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -158,7 +158,7 @@ func (r *Resource) Delete(options ...interface{}) (*Resource, error) {
 	return r.do("DELETE")
 }
 
-// Performs a Delete request on given Resource.
+// Options: Performs a Delete request on given Resource.
 // Accepts map[string]string as parameter, will be used as querystring.
 func (r *Resource) Options(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -171,7 +171,7 @@ func (r *Resource) Options(options ...interface{}) (*Resource, error) {
 	return r.do("OPTIONS")
 }
 
-// Performs a PATCH request on given Resource.
+// Patch: Performs a PATCH request on given Resource.
 // Accepts interface{} as parameter, will be used as payload.
 func (r *Resource) Patch(options ...interface{}) (*Resource, error) {
 	if len(options) > 0 {
@@ -234,7 +234,7 @@ func (r *Resource) do(method string) (*Resource, error) {
 	return r, nil
 }
 
-// Sets Payload for current Resource
+// SetPayload: Sets Payload for current Resource
 func (r *Resource) SetPayload(args interface{}) io.Reader {
 	var b []byte
 	b, _ = json.Marshal(args)
@@ -242,12 +242,12 @@ func (r *Resource) SetPayload(args interface{}) io.Reader {
 	return bytes.NewBuffer(b)
 }
 
-// Sets Headers
+// SetHeader: Sets Headers
 func (r *Resource) SetHeader(key string, value string) {
 	r.Headers.Add(key, value)
 }
 
-// Overwrites the client that will be used for requests.
+// SetClient: Overwrites the client that will be used for requests.
 // For example if you want to use your own client with OAuth2
 func (r *Resource) SetClient(c *http.Client) {
 	r.Api.Client = c
