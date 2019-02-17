@@ -37,7 +37,7 @@ type ApiStruct struct {
 	PathSuffix string
 }
 
-// Create a new API Instance and returns a Resource
+// Api: Create a new API Instance and returns a Resource
 // Accepts URL as parameter, and either a Basic Auth or a OAuth2 Client.
 func Api(baseUrl string, options ...interface{}) *Resource {
 	u, err := url.Parse(baseUrl)
